@@ -13,7 +13,7 @@ POST http://localhost:4004/odata/v4/dox/getDocumentStatus
 Content-Type: application/json
 
 {
-  "jobId": "21c716ed-91cf-4395-821e-6d53814b3f4d"
+  "jobId": "6aa668bb-da91-400c-9600-acf17079779d"
 }
 
 

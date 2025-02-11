@@ -9,7 +9,7 @@ service DoxService {
         response : String;
     }
 
-    action uploadDocument(file: Binary) returns String;
+    action uploadDocument(file: Binary , fileName :String) returns String;
     action getDocumentStatus(jobId: String) returns String;
     
 }

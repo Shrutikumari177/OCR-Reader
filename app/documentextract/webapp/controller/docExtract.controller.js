@@ -13,7 +13,7 @@ sap.ui.define([
         },
 
 
-        handleUploadPress: function () {
+        handleUploadPress1: function () {
             var oFileUploader = this.getView().byId("fileUploader");
             var oFile = oFileUploader.oFileUpload.files[0];
         
@@ -30,12 +30,12 @@ sap.ui.define([
         
                 // Call backend function with Base64 data
                 this._sendToBackend(base64String);
-            }.bind(this);  // Bind 'this' to use instance methods
+            }.bind(this); 
         
             reader.readAsDataURL(oFile);
         },
         
-        _sendToBackend: async function (base64Data) {
+        _sendToBackend1: async function (base64Data) {
             try {
                 console.log("Sending payload to backend...");
                 
@@ -60,7 +60,30 @@ sap.ui.define([
                 sap.m.MessageBox.error(error.message);
             }
         },
-        _sendToBacken1d: async function (base64Data) {
+        handleUploadPress: function () {
+            var oFileUploader = this.getView().byId("fileUploader");
+            var oFile = oFileUploader.oFileUpload.files[0];
+        
+            if (!oFile) {
+                MessageToast.show("Please select a file to upload.");
+                return;
+            }
+        
+            var reader = new FileReader();
+        
+            reader.onload = function (e) {
+                var base64String = e.target.result.split(",")[1]; 
+                console.log("Base64 Encoded File:", base64String);
+                
+                var fileName = oFile.name;  
+                console.log("File Name:", fileName);
+        
+                this._sendToBackend(base64String, fileName);
+            }.bind(this); 
+        
+            reader.readAsDataURL(oFile);
+        },
+        _sendToBackend: async function (base64Data, fileName) {
             try {
                 console.log("Sending payload to backend...");
         
@@ -72,28 +95,20 @@ sap.ui.define([
                 let sAction = "/uploadDocument(...)";
                 const oContext = oModel.bindContext(sAction, undefined);
         
-                // Set parameters dynamically
                 oContext.setParameter("file", base64Data);
-        
-                // Attach event to get the response after execution
-                oContext.attachCompleted(function (oEvent) {
-                    var oResponse = oEvent.getParameter("response"); // Get the response object
-                    console.log("Upload Response:", oResponse);
-        
-                    if (oResponse && oResponse.statusCode === 200) {
-                        sap.m.MessageToast.show("File uploaded successfully");
-                    } else {
-                        sap.m.MessageBox.error("File upload failed: " + (oResponse ? oResponse.message : "Unknown error"));
-                    }
-                });
+                oContext.setParameter("fileName", fileName); // Send filename too
         
                 await oContext.execute();
+        
+                sap.m.MessageToast.show("File uploaded successfully");
         
             } catch (error) {
                 console.error("Error uploading file:", error);
                 sap.m.MessageBox.error(error.message);
             }
-        }
+        },
+        
+       
         
           
        

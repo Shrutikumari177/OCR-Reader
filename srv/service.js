@@ -41,8 +41,12 @@ module.exports = cds.service.impl(async function () {
 
             // Step 2: Upload Document to DOX API
             console.log("Uploading document to DOX API...");
+            const fileName = req.data.fileName || "uploaded_document.pdf"; // Default if no filename is provided
+
             const form = new FormData();
-            form.append('file', Buffer.from(file, 'base64'), { filename: "uploaded_document.pdf" }); 
+            form.append('file', Buffer.from(file, 'base64'), { filename: fileName });
+
+            // form.append('file', Buffer.from(file, 'base64'), { filename: "uploaded_document.pdf" }); 
             form.append('options', JSON.stringify({
                 "clientId": "default",
                 "documentType": "Custom",
@@ -90,19 +94,14 @@ module.exports = cds.service.impl(async function () {
 
     // Get extracted document data
     this.on('getDocumentStatus', async (req) => {
-        console.log("getDocumentStatus event triggered");
 
         try {
             const { jobId } = req.data;
             if (!jobId) {
-                console.log("Error: Job ID is missing");
                 req.error(400, "Job ID is required");
             }
 
-            console.log("Fetching status for jobId:", jobId);
 
-            // Step 1: Generate Access Token
-            console.log("Requesting access token...");
             const tokenResponse = await axios.post(
                 TOKEN_URL,
                 new URLSearchParams({ grant_type: "client_credentials" }),
@@ -115,23 +114,40 @@ module.exports = cds.service.impl(async function () {
             );
 
             const accessToken = tokenResponse.data.access_token;
-            console.log("Access token received:", accessToken);
-
-            // Step 2: Fetch the extracted document data
-            console.log(`Fetching document data for jobId: ${jobId}`);
+          
             const response = await axios.get(`${DOX_API_URL}/${jobId}`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
             });
 
-            console.log("Document data retrieved:", response.data);
-            return response.data;
+            const extractedFields = {};
+            const headerFields = response.data.extraction?.headerFields || [];
+    
+            headerFields.forEach(field => {
+                if (["TotalBill", "Date", "OrderNo"].includes(field.name)) {
+                    extractedFields[field.name] = field.value;
+                }
+            });
+    
+            return extractedFields;
+    
+
+          
+
+            
 
         } catch (error) {
             console.error("Error in getDocumentStatus:", error);
             req.error(500, "Failed to retrieve document data");
         }
     });
+  
+    
+    
+
+
+  
+    
 
 });
