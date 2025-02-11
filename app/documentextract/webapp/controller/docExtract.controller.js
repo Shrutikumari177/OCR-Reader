@@ -13,53 +13,7 @@ sap.ui.define([
         },
 
 
-        handleUploadPress1: function () {
-            var oFileUploader = this.getView().byId("fileUploader");
-            var oFile = oFileUploader.oFileUpload.files[0];
-        
-            if (!oFile) {
-                MessageToast.show("Please select a file to upload.");
-                return;
-            }
-        
-            var reader = new FileReader();
-        
-            reader.onload = function (e) {
-                var base64String = e.target.result.split(",")[1]; 
-                console.log("Base64 Encoded File:", base64String);
-        
-                // Call backend function with Base64 data
-                this._sendToBackend(base64String);
-            }.bind(this); 
-        
-            reader.readAsDataURL(oFile);
-        },
-        
-        _sendToBackend1: async function (base64Data) {
-            try {
-                console.log("Sending payload to backend...");
-                
-        
-                var oModel = this.getOwnerComponent().getModel();
-                if (!oModel) {
-                    throw new Error("OData V4 model not found.");
-                }
-        
-                let sAction = "/uploadDocument(...)";
-                const oContext = oModel.bindContext(sAction, undefined);
-        
-                // Set parameters dynamically
-                oContext.setParameter("file", base64Data);
-        
-                await oContext.execute();
-        
-                sap.m.MessageToast.show("File uploaded successfully");
-        
-            } catch (error) {
-                console.error("Error uploading file:", error);
-                sap.m.MessageBox.error(error.message);
-            }
-        },
+       
         handleUploadPress: function () {
             var oFileUploader = this.getView().byId("fileUploader");
             var oFile = oFileUploader.oFileUpload.files[0];
@@ -83,6 +37,8 @@ sap.ui.define([
         
             reader.readAsDataURL(oFile);
         },
+      
+       
         _sendToBackend: async function (base64Data, fileName) {
             try {
                 console.log("Sending payload to backend...");
@@ -96,9 +52,15 @@ sap.ui.define([
                 const oContext = oModel.bindContext(sAction, undefined);
         
                 oContext.setParameter("file", base64Data);
-                oContext.setParameter("fileName", fileName); // Send filename too
+                oContext.setParameter("fileName", fileName);
         
                 await oContext.execute();
+        
+                // Retrieve response data
+                const responseData = oContext.getBoundContext().getObject();
+                console.log("Upload response:", responseData); // Log response
+        
+                
         
                 sap.m.MessageToast.show("File uploaded successfully");
         
@@ -107,6 +69,65 @@ sap.ui.define([
                 sap.m.MessageBox.error(error.message);
             }
         },
+        _sendToBackend: async function (base64Data, fileName) {
+    try {
+        console.log("Sending payload to backend...");
+
+        var oModel = this.getOwnerComponent().getModel();
+        if (!oModel) {
+            throw new Error("OData V4 model not found.");
+        }
+
+        let sAction = "/uploadDocument(...)";
+        const oContext = oModel.bindContext(sAction, undefined);
+
+        oContext.setParameter("file", base64Data);
+        oContext.setParameter("fileName", fileName);
+
+        await oContext.execute();
+
+        // Retrieve response data
+        const responseData = oContext.getBoundContext().getObject();
+        console.log("Upload response:", responseData);
+
+        // ✅ Check if headerFields exist
+        if (responseData.value && responseData.value.result && responseData.value.result.headerFields) {
+            let headerFields = responseData.value.result.headerFields;
+
+            // ✅ Create a new JSON model for the table
+            var oJsonModel = new sap.ui.model.json.JSONModel();
+            oJsonModel.setData({ headerFields: headerFields });
+
+            // ✅ Set the model to the view
+            this.getView().setModel(oJsonModel, "HeaderFieldsModel");
+
+            console.log("Header fields stored in model:", headerFields);
+        } else {
+            console.warn("No header fields found in response.");
+        }
+
+        sap.m.MessageToast.show("File uploaded successfully");
+
+    } catch (error) {
+        console.error("Error uploading file:", error);
+        sap.m.MessageBox.error(error.message);
+    }
+}
+
+      
+        
+        
+     
+        
+        
+       
+        
+      
+        
+        
+        
+        
+        
         
        
         

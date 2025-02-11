@@ -15,20 +15,25 @@
                 text="Upload File"
                 press="handleUploadPress"/>
 
-            <Table id="extractedTable" items="" visible="false">
-                <columns>
-                    <Column><Text text="Field"/></Column>
-                    <Column><Text text="Value"/></Column>
-                </columns>
-                <items>
-                    <ColumnListItem>
-                        <cells>
-                            <Text text="{key}"/>
-                            <Text text="{value}"/>
-                        </cells>
-                    </ColumnListItem>
-                </items>
-            </Table>
+            <Table id="headerTable" items="{}">
+    <columns>
+        <Column>
+            <Text text="Field Name"/>
+        </Column>
+        <Column>
+            <Text text="Value"/>
+        </Column>
+    </columns>
+    <items>
+        <ColumnListItem>
+            <cells>
+                <Text text="{name}" />
+                <Text text="{value}" />
+            </cells>
+        </ColumnListItem>
+    </items>
+</Table>
+
         </VBox>
 
     </Page>
