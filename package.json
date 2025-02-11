@@ -1,0 +1,35 @@
+{
+  "name": "document-extraction-cap",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@sap/cds": "^8",
+    "@sap/xssec": "^4.2.8",
+    "axios": "^1.7.9",
+    "express": "^4",
+    "form-data": "^4.0.1"
+  },
+  "devDependencies": {
+    "@cap-js/cds-types": "^0.8.0",
+    "@cap-js/sqlite": "^1"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "watch-docextract": "cds watch --open docextract/webapp/index.html?sap-ui-xx-viewCache=false",
+    "watch-documentextract": "cds watch --open documentextract/webapp/index.html?sap-ui-xx-viewCache=false"
+  },
+  "cds": {
+    "requires": {
+      "DocumentExtractionService": {
+        "kind": "rest",
+        "credentials": {
+          "url": "https://aiservices-trial-dox.cfapps.us10.hana.ondemand.com"
+        }
+      },
+      "auth": "xsuaa"
+    }
+  }
+}
