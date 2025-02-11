@@ -4,87 +4,98 @@ sap.ui.define([
     "sap/ui/model/odata/v4/ODataModel"
 ], function (Controller, MessageToast, ODataModel) {
     "use strict";
+    let base64String;
 
     return Controller.extend("com.ingenx.documentextract.controller.docExtract", {
         
         onInit: function () {
             this.oModel = this.getOwnerComponent().getModel(); // Ensure OData V4 model is set in manifest.json
         },
+
+
+        handleUploadPress: function () {
+            var oFileUploader = this.getView().byId("fileUploader");
+            var oFile = oFileUploader.oFileUpload.files[0];
         
-
-        // handleUploadPress: function () {
-        //     var oFileUploader = this.getView().byId("fileUploader");
-        //     var oFile = oFileUploader.oFileUpload.files[0];
-
-        //     if (!oFile) {
-        //         MessageToast.show("Please select a file to upload.");
-        //         return;
-        //     }
-
-        //     var that = this;
-        //     var reader = new FileReader();
-
-        //     reader.onload = function (e) {
-        //         var binaryData = e.target.result.split(",")[1]; 
-        //         that._uploadDocument(binaryData, oFile.name);
-        //     };
-
-        //     reader.readAsDataURL(oFile);
-        // },
-
-        // _uploadDocument: function (binaryData, fileName) {
-        //     var that = this;
-        //     var sAction = "/uploadDocument(...)";
-
-        //     // Bind context for OData V4 action execution
-        //     const oContext = this.oModel.bindContext(sAction, undefined);
-        //     oContext.setParameter("file", binaryData);
-        //     oContext.setParameter("fileName", fileName);
-
-        //     oContext.execute().then(function (oResponse) {
-        //         MessageToast.show("File uploaded successfully!");
-        //         console.log("Upload Response:", oResponse);
-
-        //         // Fetch extracted document data
-        //         that._getDocumentStatus(oResponse.jobId);
-
-        //     }).catch(function (oError) {
-        //         MessageToast.show("Upload failed. Check console for details.");
-        //         console.error("Upload Error:", oError);
-        //     });
-        // },
-
-        // _getDocumentStatus: function (jobId) {
-        //     var that = this;
-        //     var sAction = "/getDocumentStatus(...)";
-
-        //     // Bind context for OData V4 function import execution
-        //     const oContext = this.oModel.bindContext(sAction, undefined);
-        //     oContext.setParameter("jobId", jobId);
-
-        //     oContext.execute().then(function (oData) {
-        //         console.log("Extracted Data:", oData);
+            if (!oFile) {
+                MessageToast.show("Please select a file to upload.");
+                return;
+            }
+        
+            var reader = new FileReader();
+        
+            reader.onload = function (e) {
+                var base64String = e.target.result.split(",")[1]; 
+                console.log("Base64 Encoded File:", base64String);
+        
+                // Call backend function with Base64 data
+                this._sendToBackend(base64String);
+            }.bind(this);  // Bind 'this' to use instance methods
+        
+            reader.readAsDataURL(oFile);
+        },
+        
+        _sendToBackend: async function (base64Data) {
+            try {
+                console.log("Sending payload to backend...");
                 
-        //         var oTable = that.getView().byId("extractedTable");
-        //         var oTableModel = new sap.ui.model.json.JSONModel(oData);
-                
-        //         oTable.setModel(oTableModel);
-        //         oTable.bindItems({
-        //             path: "/fields",
-        //             template: new sap.m.ColumnListItem({
-        //                 cells: [
-        //                     new sap.m.Text({ text: "{key}" }),
-        //                     new sap.m.Text({ text: "{value}" })
-        //                 ]
-        //             })
-        //         });
-
-        //         oTable.setVisible(true);
-
-        //     }).catch(function (oError) {
-        //         MessageToast.show("Failed to retrieve extracted data.");
-        //         console.error("Document Status Error:", oError);
-        //     });
-        // }
-    });
+        
+                var oModel = this.getOwnerComponent().getModel();
+                if (!oModel) {
+                    throw new Error("OData V4 model not found.");
+                }
+        
+                let sAction = "/uploadDocument(...)";
+                const oContext = oModel.bindContext(sAction, undefined);
+        
+                // Set parameters dynamically
+                oContext.setParameter("file", base64Data);
+        
+                await oContext.execute();
+        
+                sap.m.MessageToast.show("File uploaded successfully");
+        
+            } catch (error) {
+                console.error("Error uploading file:", error);
+                sap.m.MessageBox.error(error.message);
+            }
+        },
+        _sendToBacken1d: async function (base64Data) {
+            try {
+                console.log("Sending payload to backend...");
+        
+                var oModel = this.getOwnerComponent().getModel();
+                if (!oModel) {
+                    throw new Error("OData V4 model not found.");
+                }
+        
+                let sAction = "/uploadDocument(...)";
+                const oContext = oModel.bindContext(sAction, undefined);
+        
+                // Set parameters dynamically
+                oContext.setParameter("file", base64Data);
+        
+                // Attach event to get the response after execution
+                oContext.attachCompleted(function (oEvent) {
+                    var oResponse = oEvent.getParameter("response"); // Get the response object
+                    console.log("Upload Response:", oResponse);
+        
+                    if (oResponse && oResponse.statusCode === 200) {
+                        sap.m.MessageToast.show("File uploaded successfully");
+                    } else {
+                        sap.m.MessageBox.error("File upload failed: " + (oResponse ? oResponse.message : "Unknown error"));
+                    }
+                });
+        
+                await oContext.execute();
+        
+            } catch (error) {
+                console.error("Error uploading file:", error);
+                sap.m.MessageBox.error(error.message);
+            }
+        }
+        
+          
+       
+           });
 });
