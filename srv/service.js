@@ -94,14 +94,13 @@ module.exports = cds.service.impl(async function () {
 
     // Get extracted document data
     this.on('getDocumentStatus', async (req) => {
-
         try {
             const { jobId } = req.data;
             if (!jobId) {
-                req.error(400, "Job ID is required");
+                return req.error(400, "Job ID is required");
             }
-
-
+    
+            // Step 1: Generate Access Token
             const tokenResponse = await axios.post(
                 TOKEN_URL,
                 new URLSearchParams({ grant_type: "client_credentials" }),
@@ -112,36 +111,32 @@ module.exports = cds.service.impl(async function () {
                     }
                 }
             );
-
+    
             const accessToken = tokenResponse.data.access_token;
-          
+    
+            // Step 2: Fetch the extracted document data
             const response = await axios.get(`${DOX_API_URL}/${jobId}`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
             });
-
-            const extractedFields = {};
-            const headerFields = response.data.extraction?.headerFields || [];
     
-            headerFields.forEach(field => {
-                if (["TotalBill", "Date", "OrderNo"].includes(field.name)) {
-                    extractedFields[field.name] = field.value;
-                }
-            });
+            const extraction = response.data.extraction;
     
-            return extractedFields;
+            // Filter headerFields to only include name and value
+            const headerFields = extraction.headerFields.map(({ name, value }) => ({ name, value }));
     
-
-          
-
-            
-
+            return {
+                headerFields,
+                lineItems: extraction.lineItems
+            };
+    
         } catch (error) {
-            console.error("Error in getDocumentStatus:", error);
             req.error(500, "Failed to retrieve document data");
         }
     });
+    
+    
   
     
     
