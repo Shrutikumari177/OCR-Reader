@@ -24,6 +24,13 @@
     "watch-documentextract": "cds watch --open documentextract/webapp/index.html?sap-ui-xx-viewCache=false"
   },
   "cds": {
+    "server": {
+      "body_parser": {
+        "limit": "50mb"
+      }
+    },
+
+
     "requires": {
       "DocumentExtractionService": {
         "kind": "rest",
