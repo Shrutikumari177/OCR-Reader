@@ -1,40 +1,103 @@
 <mvc:View controllerName="com.ingenx.documentextract.controller.docExtract"
     xmlns:mvc="sap.ui.core.mvc"
-     xmlns:u="sap.ui.unified"
-    xmlns="sap.m">
-    <Page id="page" title="{i18n>title}">
-            <VBox class="sapUiSmallMargin">
-            <u:FileUploader
-                id="fileUploader"
-                name="myFileUpload"
-                sendXHR="true"
-                tooltip="Upload your file to the local server"
-                uploadComplete="handleUploadComplete"/>
+    xmlns:u="sap.ui.unified"
+    xmlns="sap.m"
+    xmlns:layout="sap.ui.layout"
+     xmlns:l="sap.ui.layout"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:tnt="sap.tnt"
+    xmlns:core="sap.ui.core">
 
-            <Button
-                text="Upload File"
-                press="handleUploadPress"/>
+    <Page id="page" showHeader="false">
+    <tnt:ToolHeader
+            id="invMappingshellOnlyMandatoryControls"
+            class="sapUiTinyMargin header_nav"
+        >
+            <Title
+                id="invMapping_Title"
+                textAlign="Center"
+                text="Invoice Scanning"
+                wrapping="false"
+                class="page_title"
+            >
+                <layoutData>
+                    <OverflowToolbarLayoutData
+                        id="invMapping_OverflowToolbarLayoutData"
+                        priority="Disappear"
+                    />
+                </layoutData>
+            </Title>
+            <ToolbarSpacer id="invMapping_ToolbarSpacer" />
+        </tnt:ToolHeader>
+        <layout:BlockLayout  background="Dashboard">
+            <!-- File Upload Section -->
+            <layout:BlockLayoutRow>
+                <layout:BlockLayoutCell width="100%">
+                   
+                       
+                            <HBox justifyContent="Start" alignItems="Center">
+                                <u:FileUploader
+                                    id="fileUploader"
+                                    name="myFileUpload"
+                                    sendXHR="true"
+                                    tooltip="Upload your file"
+                                    uploadComplete="handleUploadComplete"
+                                    
+/>
 
-            <Table id="headerTable" items="{}">
-    <columns>
-        <Column>
-            <Text text="Field Name"/>
-        </Column>
-        <Column>
-            <Text text="Value"/>
-        </Column>
-    </columns>
-    <items>
-        <ColumnListItem>
-            <cells>
-                <Text text="{name}" />
-                <Text text="{value}" />
-            </cells>
-        </ColumnListItem>
-    </items>
-</Table>
+                                <Button
+                                   class="sapUiTinyMarginBegin"
+                                    text="Scan Document"
+                                    press="handleUploadPress"
+                                    icon="sap-icon://upload"
+                                    type="Emphasized" />
+                            </HBox>
+                      
+                  
+                </layout:BlockLayoutCell>
+            </layout:BlockLayoutRow>
 
-        </VBox>
-
+            <!-- Table Section -->
+            <layout:BlockLayoutRow id="TableBlocklayoutRow" visible="{= ${headerModel>/headerFields}.length > 0 }">
+    <layout:BlockLayoutCell width="100%">
+    <HBox justifyContent="End" >
+    <Button
+                                   class="sapUiTinyMarginBegin"
+                                    text="Save"
+                                    press="handleSave"
+                                   
+                                    type="Emphasized" />
+                                    <Button
+                                   class="sapUiTinyMarginBegin"
+                                    text="Edit"
+                                    press="handleEdit"
+                                    
+                                    type="Emphasized" />
+    
+    </HBox>
+        <Table id="headerTable" items="{headerModel>/headerFields}">
+            <headerToolbar>
+                <OverflowToolbar id="salesOrderCreate__OverflowToolbar">
+                    <Title id="salesOrderCreate__tTitle" text="Invoice Details" textAlign="Center" level="H2"/>
+                    <ToolbarSpacer id="salesOrderCreate__tbs"/>
+                </OverflowToolbar>
+            </headerToolbar>
+            <columns>
+                <Column><Text text="Name"/></Column>
+                <Column><Text text="Value"/></Column>
+            </columns>
+            <items>
+                <ColumnListItem>
+                    <cells>
+                        <Text text="{headerModel>name}"/>
+                        <Text text="{headerModel>value}"/>
+                    </cells>
+                </ColumnListItem>
+            </items>
+        </Table>
+    </layout:BlockLayoutCell>
+</layout:BlockLayoutRow>
+        </layout:BlockLayout>
     </Page>
+
 </mvc:View>

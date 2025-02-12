@@ -29,7 +29,7 @@
           "url": "https://aiservices-trial-dox.cfapps.us10.hana.ondemand.com"
         }
       },
-      "auth": "xsuaa"
+      "auth": "dummy"
     }
   }
 }
