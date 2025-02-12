@@ -96,10 +96,21 @@
           "target": [
             "TargetdocExtract"
           ]
+        },
+        {
+          "name": "RouteInvoiceScan",
+          "pattern": "InvoiceScan",
+          "target": [
+            "TargetInvoiceScan"
+          ]
         }
       ],
       "targets": {
         "TargetdocExtract": {
+          "id": "Tile",
+          "name": "Tile"
+        },
+        "TargetInvoiceScan": {
           "id": "docExtract",
           "name": "docExtract"
         }

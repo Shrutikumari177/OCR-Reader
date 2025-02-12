@@ -61,19 +61,26 @@
             <layout:BlockLayoutRow id="TableBlocklayoutRow" visible="{= ${headerModel>/headerFields}.length > 0 }">
     <layout:BlockLayoutCell width="100%">
     <HBox justifyContent="End" >
-    <Button
-                                   class="sapUiTinyMarginBegin"
-                                    text="Save"
-                                    press="handleSave"
-                                   
-                                    type="Emphasized" />
-                                    <Button
-                                   class="sapUiTinyMarginBegin"
-                                    text="Edit"
-                                    press="handleEdit"
-                                    
-                                    type="Emphasized" />
+                                 <Button
+    class="sapUiTinyMarginBegin"
+    text="Save"
+    press="handleSave"
+    type="Emphasized"
+    visible="{headerModel>/isEditing}" />
     
+<Button
+    class="sapUiTinyMarginBegin"
+    text="Submit"
+    press="handleSubmit"
+    type="Emphasized"
+    visible="{= !${headerModel>/isEditing} }" />
+    
+<Button
+    class="sapUiTinyMarginBegin"
+    text="Edit"
+    press="handleEdit"
+    type="Emphasized" />
+
     </HBox>
         <Table id="headerTable" items="{headerModel>/headerFields}">
             <headerToolbar>
@@ -86,14 +93,21 @@
                 <Column><Text text="Name"/></Column>
                 <Column><Text text="Value"/></Column>
             </columns>
-            <items>
-                <ColumnListItem>
-                    <cells>
-                        <Text text="{headerModel>name}"/>
-                        <Text text="{headerModel>value}"/>
-                    </cells>
-                </ColumnListItem>
-            </items>
+           <items>
+    <ColumnListItem>
+        <cells>
+            <!-- Name Field (Editable based on isEdit property) -->
+            <Text text="{headerModel>name}" 
+                  />
+            
+            <!-- Read-Only Value Field -->
+            <Input value="{headerModel>value}" editable="{headerModel>isEdit}"/>
+        </cells>
+    </ColumnListItem>
+</items>
+
+
+
         </Table>
     </layout:BlockLayoutCell>
 </layout:BlockLayoutRow>

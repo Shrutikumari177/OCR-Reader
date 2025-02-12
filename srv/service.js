@@ -2,13 +2,13 @@ const cds = require('@sap/cds');
 const axios = require('axios');
 const FormData = require('form-data');
 
-const CLIENT_ID = "sb-1161e4a9-2dc8-43a3-bbbc-ea73adef7cf8!b378067|dox-xsuaa-std-trial!b10844";
-const CLIENT_SECRET = "1d2bdc15-4e8c-4792-8de0-ff6de6e8c725$y2YqF4Dg2YauV9OG2PsqKvpcuogE5zU8YbmmF-_W4KE=";
-const TOKEN_URL = "https://trial-p1l5nvpo.authentication.us10.hana.ondemand.com/oauth/token?grant_type=client_credentials";
+const CLIENT_ID = "sb-9278451d-24de-4c53-a322-3f3335539527!b367227|dox-xsuaa-std-trial!b10844";
+const CLIENT_SECRET = "438a51cf-503d-4eaf-8bf1-7ffb117ce5b2$GFkS3NcRxr59tO2VCQRUynUQGPpBKUWFOq0rbHqV-ls=";
+const TOKEN_URL = "https://7bf65c89trial.authentication.us10.hana.ondemand.com/oauth/token?grant_type=client_credentials";
 const DOX_API_URL = "https://aiservices-trial-dox.cfapps.us10.hana.ondemand.com/document-information-extraction/v1/document/jobs";
 
 module.exports = cds.service.impl(async function () {
-    const { Documents } = this.entities;
+    const { Documents, InvoiceDetails } = this.entities;
 
   
    
@@ -19,7 +19,7 @@ module.exports = cds.service.impl(async function () {
     
             const { file, fileName = "uploaded_document.pdf" } = req.data;
             if (!file) {
-                console.error("❌ Error: No file provided");
+            
                 return req.error(400, 'File is required');
             }
     
@@ -29,7 +29,6 @@ module.exports = cds.service.impl(async function () {
                 prepareFileUpload(file, fileName)
             ]);
     
-            console.log("✅ Access Token Retrieved:", accessToken ? "Success" : "Failed");
     
             console.log("🔹 Step 2: Uploading Document to DOX...");
             const jobId = await uploadToDOX(formData, accessToken);
@@ -79,8 +78,8 @@ module.exports = cds.service.impl(async function () {
         form.append('file', Buffer.from(file, 'base64'), { filename: fileName });
         form.append('options', JSON.stringify({
             clientId: "default",
-            documentType: "Invoice",
-            schemaName: "SAP_invoice_schema",
+            documentType: "Custom",
+            schemaName: "Custom_Invoice",
             schemaVersion: "1",
             receivedDate: "2020-02-17"
         }));
@@ -116,17 +115,22 @@ module.exports = cds.service.impl(async function () {
     
         throw new Error("Document processing timeout: No extraction data received.");
     }
-    
-    
-    
-    
-    
-  
-    
-    
 
 
   
-    
-
 });
+
+    
+    
+    
+    
+    
+    
+  
+    
+    
+
+
+  
+    
+

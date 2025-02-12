@@ -1,0 +1,29 @@
+<mvc:View controllerName="com.ingenx.documentextract.controller.Tile"
+    displayBlock="true"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+    <OverflowToolbar
+        id="ICQrGeneratortile_OverFlowToolbar"
+        height="50px"
+    >
+        <Title
+            id="ICQrGeneratortile_pageHeader"
+            text="Invoice Scanning"
+            textAlign="Center"
+        />
+    </OverflowToolbar>
+     <GenericTile
+                id="ICQrGeneratortile_GenericTileByDate"
+                class="sapUiSmallMarginBegin sapUiSmallMarginTop tileLayout"
+                header="Invoice Scanning"
+                press="onPressInvoiceScan"
+            >
+                <TileContent >
+                    <ImageContent
+                        id="_IDGenImagContent3"
+                    />
+                </TileContent>
+            </GenericTile>
+             
+   
+</mvc:View>

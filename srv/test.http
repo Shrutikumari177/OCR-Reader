@@ -28,5 +28,22 @@ Content-Type: application/json
 }
 }
 
+###
+POST http://localhost:4004/odata/v4/dox/InvoiceDetails
+Content-Type: application/json
+
+{
+    "InvoiceNumber": "INV-20240212",
+    "GrossAmount": 1500.75,
+    "InvoiceDate": "2024-02-12",
+    "InvoiceDueDate": "2024-03-12",
+    "SenderCountryCode": "IN",
+    "BuyerAddress": "1234, Street Name, City, India",
+    "BuyerName": "ABC Pvt Ltd",
+    "ReceiverPostalCode": "560001",
+    "SupplierAddress": "5678, Supplier Street, City, India",
+    "SupplierName": "XYZ Suppliers"
+}
+
 
 
